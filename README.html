@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>refrescador</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="refrescador">refrescador</h1>
+<h2 id="instalar">Instalar</h2>
+<p>Para instalar mejor global y luego puedes iniciar instancias desde línea de comandos:</p>
+<pre><code class="language-sh">npm i -g refrescador
+</code></pre>
+<h2 id="opciones-y-valores-por-defecto">Opciones y valores por defecto</h2>
+<table>
+<thead>
+<tr>
+<th>opción</th>
+<th>abreviación</th>
+<th>tipo</th>
+<th>por defecto</th>
+<th>explicación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>watch</code></td>
+<td><code>-w</code></td>
+<td>Array</td>
+<td><code>[]</code></td>
+<td>Ficheros a escuchar (glob)</td>
+</tr>
+<tr>
+<td><code>port</code></td>
+<td><code>-p</code></td>
+<td>Number</td>
+<td>3003</td>
+<td>Puerto del servidor <a href="http://socket.io">socket.io</a></td>
+</tr>
+<tr>
+<td><code>ignore</code></td>
+<td><code>-i</code></td>
+<td>Array</td>
+<td><code>[&quot;**node_modules**&quot;]</code></td>
+<td>Ficheros a ignorar (glob)</td>
+</tr>
+<tr>
+<td><code>debounce</code></td>
+<td><code>-d</code></td>
+<td>Number</td>
+<td><code>50</code></td>
+<td>Milisegundos de espera entre evento y re-trigger (porque se acumulan)</td>
+</tr>
+<tr>
+<td><code>message</code></td>
+<td><code>-m</code></td>
+<td>String</td>
+<td><code>&quot;Hora de refrescar!&quot;</code></td>
+<td>Mesaje de interludio si quieres</td>
+</tr>
+<tr>
+<td><code>execute</code></td>
+<td><code>-x</code></td>
+<td>Array</td>
+<td><code>[]</code></td>
+<td>Comandos de consola intermedios</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td><code>-v</code></td>
+<td>Boolean</td>
+<td><code>false</code></td>
+<td>Saber la versión</td>
+</tr>
+<tr>
+<td><code>help</code></td>
+<td><code>-h</code></td>
+<td>Boolean</td>
+<td><code>false</code></td>
+<td>Ver la ayuda</td>
+</tr>
+</tbody>
+</table>
+<h2 id="línea-de-comandos">Línea de comandos</h2>
+<p>Este es un ejemplo con todas las opciones, las obligatorias las irá pidiendo con errores:</p>
+<pre><code class="language-sh">refrescador
+  --watch . .. source.sh -w /home/whatever <span class="hljs-comment"># se acumulan</span>
+  --ignore <span class="hljs-string">&quot;**/*.{compiled,dist}.*&quot;</span> -i <span class="hljs-string">&quot;dist.{css,js}&quot;</span> <span class="hljs-comment"># se acumulan</span>
+  --port 3001 -p 3002 <span class="hljs-comment"># 3002</span>
+  --message <span class="hljs-string">&quot;Hola, que tal&quot;</span> -m <span class="hljs-string">&quot;Hola, como estas&quot;</span> <span class="hljs-comment"># Hola como estas</span>
+  --debounce 200 -d 201 <span class="hljs-comment"># 201</span>
+  --version -v <span class="hljs-literal">false</span> <span class="hljs-comment">#false</span>
+  --<span class="hljs-built_in">help</span> -h <span class="hljs-comment"># trye</span>
+  --execute <span class="hljs-string">&quot;echo hola1&quot;</span> -x <span class="hljs-string">&quot;echo hola2&quot;</span> <span class="hljs-comment"># se acumula</span>
+  --payload-file <span class="hljs-string">&quot;payload1.js&quot;</span> -pf <span class="hljs-string">&quot;payload2.js&quot;</span> <span class="hljs-comment"># payload2.js</span>
+  --payload <span class="hljs-string">&quot;console.log(&#x27;Inline payload too!&#x27;)&quot;</span> -pl <span class="hljs-string">&quot;console.log(&#x27;Yes!!&#x27;)&quot;</span> <span class="hljs-comment"># Yes!!</span>
+</code></pre>
+<h2 id="api">API</h2>
+<p>En la API, todas son opcionales:</p>
+<pre><code class="language-sh">require(<span class="hljs-string">&quot;refrescador&quot;</span>)({
+  watch: [__dirname],
+  ignore: [<span class="hljs-string">&quot;**node_modules**&quot;</span>],
+  execute: [<span class="hljs-string">&quot;echo &#x27;hello from the trigger&#x27;&quot;</span>],
+  message: <span class="hljs-string">&quot;El tiempo de refrescar ha llegado&quot;</span>,
+  port: 5005,
+})
+</code></pre>
+<p>En principio, comprobará que los tipos sean conformes a la especificación automáticamente, e irá pidiendo las correcciones.</p>
+<h1 id="features">Features</h1>
+<ul>
+<li>escucha ficheros con <code>chokidar</code></li>
+<li>acepta patrones glob con <code>glob</code></li>
+<li>envía autorrefresco a sus clientes de <code>socket.io</code></li>
+<li>permite bajarse socket.io-cliente y refrescador.cliente</li>
+<li>configurables:
+<ul>
+<li>patrones glob para entrada</li>
+<li>patrones glob para ignorar</li>
+<li>puerto del servidor</li>
+<li>fichero de payload</li>
+<li>fichero de payload</li>
+<li>código de payload</li>
+</ul>
+</li>
+</ul>
+
+            
+            
+        </body>
+        </html>

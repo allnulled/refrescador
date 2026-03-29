@@ -1,0 +1,23 @@
+{
+  "name": "@allnulled/refrescador",
+  "version": "1.0.0",
+  "main": "refrescador.api.js",
+  "bin": {
+    "refrescador": "refrescador.binario.js"
+  },
+  "scripts": {
+    "test:cli": "pkill http-server & http-server -c-1 . -o & ./refrescador.binario.js -w . -p 3003 -pl 'console.log(`El refresco se demora 1 segundo por el await`); await new Promise(ok => setTimeout(() => {ok();},1000));'",
+    "test:api": "pkill http-server & http-server -c-1 . -o & node test.js"
+  },
+  "keywords": [
+    "live-reload"
+  ],
+  "author": "allnulled",
+  "license": "WTFPL",
+  "description": "",
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "ejs": "^5.0.1",
+    "socket.io": "^4.8.3"
+  }
+}

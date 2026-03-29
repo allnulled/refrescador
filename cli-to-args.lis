@@ -1,0 +1,34 @@
+(let *args be (@ process argv))
+(let *settings be (@ arguments 0))
+(let *output be (object))
+
+(let *current be "_")
+
+(for-each *arg of @args [
+  (if (string-starts-with "--" @arg) then [
+    (let *id be (string-substr @arg 2))
+    (let (* output @id) be (list))
+    (set *current to @id)
+  ] else-if (string-starts-with "-" @arg) then [
+    (let *id be (string-substr @arg 1))
+    (let (* output @id) be (list))
+    (set *current to @id)
+  ] else [
+    (array.push @arg into (@ output @id))
+  ])
+])
+
+(for-each *settingId in @settings [
+  (let *setting be (@ settings @settingId))
+  (if (check-object @output misses-key @settingId) then [
+    (if (check-object @setting has-key "default") then [
+      (set (@ output @settingId) to (@ settings default))
+    ])
+  ])
+  (if (check-object @setting has-key "format") then [
+    (let *result be (call (@ setting format) (@ output @settingId))
+    (set (@ output @settingId) to @result)
+  ])
+])
+
+(return @output)
