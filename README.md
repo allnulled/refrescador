@@ -8,6 +8,17 @@ Para instalar mejor global y luego puedes iniciar instancias desde línea de com
 npm i -g refrescador
 ```
 
+## Conectar el cliente
+
+Tienes que importar 2, o 1 si ya incluyes a `socket.io-client.js` en tu desarrollo:
+
+```html
+<!-- Socket.io-client -->
+<script src="http://127.0.0.1:3003/socket.io-client.js"></script>
+<!-- El refrescador/cliente, que usa socket.io para conectarse al refrescador/servidor -->
+<script src="http://127.0.0.1:3003/client.js"></script>
+```
+
 ## Opciones y valores por defecto
 
 | opción | abreviación | tipo | por defecto | explicación |
@@ -59,7 +70,7 @@ require("refrescador")({
 
 En principio, comprobará que los tipos sean conformes a la especificación automáticamente, e irá pidiendo las correcciones.
 
-# Features 
+# Features
 
 - escucha ficheros con `chokidar`
 - acepta patrones glob con `glob`
