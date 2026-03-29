@@ -5,7 +5,11 @@
 Para instalar mejor global y luego puedes iniciar instancias desde línea de comandos:
 
 ```sh
-npm i -g refrescador
+mkdir refrescador
+cd refrescador
+git clone https://github.com/allnulled/refrescador.git .
+npm install
+npm link
 ```
 
 ## Conectar el cliente
