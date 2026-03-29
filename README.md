@@ -1,8 +1,10 @@
 # refrescador
 
+Refrescar y/o ejecutar automático al cambiar ficheros o directorios para acelerar desarrollo desde línea de comandos o API y 100% configurable.
+
 ## Instalar
 
-Para instalar mejor global y luego puedes iniciar instancias desde línea de comandos:
+Para instalar mejor linkar y luego puedes iniciar instancias desde línea de comandos directamente:
 
 ```sh
 mkdir refrescador
@@ -14,6 +16,12 @@ npm link
 
 ## Conectar el cliente
 
+**Nota:** este programa sirve igual `chokidar` y `nodemon` para ejecución automática, pero además puede conectarse por `socket.io` para refrescar al cliente como `live-reload`.
+
+Solo hay versión html.
+
+### Versión html (única)
+
 Tienes que importar 2, o 1 si ya incluyes a `socket.io-client.js` en tu desarrollo:
 
 ```html
@@ -21,6 +29,17 @@ Tienes que importar 2, o 1 si ya incluyes a `socket.io-client.js` en tu desarrol
 <script src="http://127.0.0.1:3003/socket.io-client.js"></script>
 <!-- El refrescador/cliente, que usa socket.io para conectarse al refrescador/servidor -->
 <script src="http://127.0.0.1:3003/client.js"></script>
+```
+
+La plantilla dice así, ahí puedes ver el evento `refresh-window` que se activa para otras apis fuera de html:
+
+```ejs
+io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
+    console.log("[refrescador] La app ha sido llamada a refrescarse por el servidor");
+    <%- !config.payloadFile ? "" : require("fs").readFileSync(config.payloadFile).toString()%>
+    <%-config.payload%>
+    location.reload();
+});
 ```
 
 ## Opciones y valores por defecto
