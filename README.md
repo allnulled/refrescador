@@ -22,6 +22,28 @@ Solo hay versión html.
 
 ### Versión html (única)
 
+Puedes poner un `index.html` y acceder a él (ruta completa, incluye `index.html`):
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <title>Refrescador | Test</title>
+</head>
+
+<body>
+    <script src="socket.io-client.js"></script>
+    <script src="client.js"></script>
+    Aquí empiezas
+</body>
+
+</html>
+```
+
 Tienes que importar 2, o 1 si ya incluyes a `socket.io-client.js` en tu desarrollo:
 
 ```html
