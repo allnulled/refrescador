@@ -74,7 +74,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `debounce` | `-d` | Number | `50` | Milisegundos de espera entre evento y re-trigger (porque se acumulan) |
 | `message` | `-m` | String | `"Hora de refrescar!"` | Mesaje de interludio si quieres |
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
-| `payload-file` | `-pf` | String | `""` | Inyección js al refrescar pero vía fichero |
+| `payload-file` | `-pf` | String | `""` | Inyección js al refrescar pero vía fichero. Si es `*.ejs` se usará como plantilla (superior), no como inyeción js simple. |
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
