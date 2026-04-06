@@ -70,7 +70,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 |----|----|----|----|----|
 | `watch` | `-w` | Array | `[process.cwd()]` | Ficheros a escuchar (glob), por defecto el actual |
 | `port` | `-p` | Number | 3003 | Puerto del servidor socket.io |
-| `ignore` | `-i` | Array | `["**node_modules**"]` | Ficheros a ignorar (glob) |
+| `ignore` | `-i` | Array | `["**/node_modules/**", "**/dist/**", "**/*.dist.*", "**/dist.*"]` | Ficheros a ignorar (glob). Usa 'dist' en la ruta para que deje de escucharlos automático. |
 | `debounce` | `-d` | Number | `50` | Milisegundos de espera entre evento y re-trigger (porque se acumulan) |
 | `message` | `-m` | String | `"Hora de refrescar!"` | Mesaje de interludio si quieres |
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
@@ -93,7 +93,8 @@ refrescador
   --message "Hola, que tal" -m "Hola, como estas" # Hola como estas
   --debounce 200 -d 201 # 201
   --version -v false #false
-  --help -h # trye
+  --help -h # true
+  --extensions ".js" -e ".css" ".html" # se acumula
   --execute "echo hola1" -x "echo hola2" # se acumula
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
