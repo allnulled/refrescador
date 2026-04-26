@@ -75,7 +75,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `message` | `-m` | String | `"Hora de refrescar!"` | Mesaje de interludio si quieres |
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
 | `payload-file` | `-pf` | String | `""` | Inyección js al refrescar pero vía fichero. Si es `*.ejs` se usará como plantilla (superior), no como inyeción js simple. |
-| `execute` | `-x` | Array | `[]` | Comandos de consola intermedios |
+| `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
 
@@ -95,7 +95,7 @@ refrescador
   --version -v false #false
   --help -h # true
   --extensions ".js" -e ".css" ".html" # se acumula
-  --execute "echo hola1" -x "echo hola2" # se acumula
+  --execute "echo hola1" -x "node programa.js @{refrescador.file}" # se acumula + se puede inyectar el fichero que ha cambiado
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
 ```
@@ -108,7 +108,7 @@ En la API, todas son opcionales:
 require("refrescador")({
   watch: [__dirname],
   ignore: ["**node_modules**"],
-  execute: ["echo 'hello from the trigger'"],
+  execute: ["echo 'hello from the trigger'", "node program.js @{refrescador.file}"],
   message: "El tiempo de refrescar ha llegado",
   port: 5005,
 })
@@ -129,3 +129,7 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - fichero de payload
    - fichero de payload
    - código de payload
+   - inyecta el fichero de cambios en la ejecución:
+      - con `--execute 'node program.js @{refrescador.file}'`
+      - para poder hacer hot-reloading o compilación selectiva
+      - no compilar todo el proyecto, sino las partes que te interesen
