@@ -22,7 +22,9 @@ Solo hay versión html.
 
 ### Versión html (única)
 
-Puedes poner un `index.html` y acceder a él (ruta completa, incluye `index.html`):
+Por defecto, `refrescador` genera un `index.html` virtual y cacheado renderizando con `ejs` al `index.ejs.html` de la raíz, y lo sirve como entrada de la aplicación estática.
+
+Sin embargo, tú puedes poner un `index.html` (o extender el `.ejs.html` original) y acceder a él:
 
 ```html
 <!DOCTYPE html>
@@ -36,30 +38,30 @@ Puedes poner un `index.html` y acceder a él (ruta completa, incluye `index.html
 </head>
 
 <body>
-    <script src="socket.io-client.js"></script>
-    <script src="client.js"></script>
+    <script src="<%-config.urlPrefix%>/socket.io-client.js"></script>
+    <script src="<%-config.urlPrefix%>/client.js"></script>
     Aquí empiezas
 </body>
 
 </html>
 ```
 
-Tienes que importar 2, o 1 si ya incluyes a `socket.io-client.js` en tu desarrollo:
+Tienes que importar 2, o 1 si ya incluyes a `socket.io-client.js` en tu desarrollo, con algo así:
 
 ```html
 <!-- Socket.io-client -->
-<script src="http://127.0.0.1:3003/socket.io-client.js"></script>
+<script src="http://127.0.0.1:<%-config.port || 3003%><%-config.urlPrefix || ""%>/socket.io-client.js"></script>
 <!-- El refrescador/cliente, que usa socket.io para conectarse al refrescador/servidor -->
-<script src="http://127.0.0.1:3003/client.js"></script>
+<script src="http://127.0.0.1:<%-config.port || 3003%><%-config.urlPrefix || ""%>/client.js"></script>
 ```
 
-La plantilla dice así, ahí puedes ver el evento `refresh-window` que se activa para otras apis fuera de html:
+La plantilla del `client.js` dice así, ahí puedes ver el evento `refresh-window` que se activa para otras apis fuera de html:
 
 ```ejs
 io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
     console.log("[refrescador] La app ha sido llamada a refrescarse por el servidor");
-    <%- !config.payloadFile ? "" : require("fs").readFileSync(config.payloadFile).toString()%>
-    <%-config.payload%>
+    <%- !config.payloadFile ? "" : require("fs").readFileSync(config.payloadFile).toString() %>
+    <%- config.payload %>
     location.reload();
 });
 ```
