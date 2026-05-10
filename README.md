@@ -79,6 +79,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
 | `execute-callback` | `-xc` | Array | `[]` | Ficheros js a importar con `require` que exportan una función que espera ser llamada en cada evento. Usa el prefijo `!` para refrescar la `require.cache` automáticamente en cada evento. |
 | `serve` | `-s` | String | `process.cwd()` | Directorio que el servidor estático expone. |
+| `serve-path` | `-sp` | String | `""` | Ruta que sirve la aplicación estática del servidor. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
 
@@ -103,6 +104,8 @@ refrescador
   --execute-callback "some-file.js" -xc "some-other-file.js" # se acumula + se puede inyectar el fichero que ha cambiado
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
+  --serve "src/public/www" # solo 1 string
+  --serve-path "dir/app" # solo 1 string
 ```
 
 ## API
@@ -130,17 +133,30 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
 - envía autorrefresco a sus clientes de `socket.io`
 - permite bajarse socket.io-cliente y refrescador.cliente
 - configurables:
-   - patrones glob para entrada
-   - patrones glob para ignorar
-   - puerto del servidor
-   - fichero de payload
-   - código de payload
+   - patrones glob para entrada: `watch`
+   - patrones glob para ignorar: `ignore`
+   - función para ignorar ficheros selectivamente al principio del evento: `ignoreCallback`
+   - puerto del servidor: `port` 
+   - fichero de payload para el navegador: `payloadFile`
+   - código de payload para el navegador: `payload`
+   - tiempo de demora entre eventos: `debounce`
    - inyecta el fichero de cambios en la ejecución:
       - con `--execute 'node program.js @{refrescador.file}'`
       - para poder hacer hot-reloading o compilación selectiva
       - no compilar todo el proyecto, sino las partes que te interesen
-   - función para ignorar ficheros selectivamente al principio del evento
-   - función para executar un callback en lugar de un comando de consola 
+   - función para executar un callback en lugar de un comando de consola: `executeCallback`
       - es más rápido que una llamada a consola
       - permite interrumpir el evento si devuelves un `AbortController`
-- servidor con `express` para manejar *mimetypes*
+   - ruta a exponer en servidor estático: `serve`
+      - con servidor con `express` para manejar *mimetypes*
+   - mensaje adjunto opcional: `message`
+   - ruta del servidor que expone la aplicación estática: `urlPrefix`
+      - las rutas en el `index.html` servido cambiarán con esto
+         - por eso en el proyecto hay solamente un `index.ejs.html`
+         - y el `index.html` solo existe en la caché del servidor
+      - la ruta del servidor `socket.io` en cambio se mantiene en la raíz
+      - esto te permite separar lo que es **socket.io y desarrollo** de lo que ya es **navegador y producción**:
+         - en el subpath que digas
+         - compatible con Github Pages (si ignoras la parte de `socket.io`)
+   - si en un error en cualquiera de los comandos hay que interrumpìr el evento de cambios detectados o no: `bulletproof`
+   - las extensiones de fichero que se están observando: `extensions`
