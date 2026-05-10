@@ -127,9 +127,10 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - patrones glob para ignorar
    - puerto del servidor
    - fichero de payload
-   - fichero de payload
    - código de payload
    - inyecta el fichero de cambios en la ejecución:
       - con `--execute 'node program.js @{refrescador.file}'`
       - para poder hacer hot-reloading o compilación selectiva
       - no compilar todo el proyecto, sino las partes que te interesen
+   - función para ignorar ficheros selectivamente al principio del evento
+- servidor con `express` para manejar *mimetypes*
