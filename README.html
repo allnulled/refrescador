@@ -139,9 +139,51 @@
         </head>
         <body class="vscode-body vscode-light">
             <h1 id="refrescador">refrescador</h1>
+<p>Refrescar y/o ejecutar automático al cambiar ficheros o directorios para acelerar desarrollo desde línea de comandos o API y 100% configurable.</p>
 <h2 id="instalar">Instalar</h2>
-<p>Para instalar mejor global y luego puedes iniciar instancias desde línea de comandos:</p>
-<pre><code class="language-sh">npm i -g refrescador
+<p>Para instalar mejor linkar y luego puedes iniciar instancias desde línea de comandos directamente:</p>
+<pre><code class="language-sh"><span class="hljs-built_in">mkdir</span> refrescador
+<span class="hljs-built_in">cd</span> refrescador
+git <span class="hljs-built_in">clone</span> https://github.com/allnulled/refrescador.git .
+npm install
+npm <span class="hljs-built_in">link</span>
+</code></pre>
+<h2 id="conectar-el-cliente">Conectar el cliente</h2>
+<p><strong>Nota:</strong> este programa sirve igual <code>chokidar</code> y <code>nodemon</code> para ejecución automática, pero además puede conectarse por <code>socket.io</code> para refrescar al cliente como <code>live-reload</code>.</p>
+<p>Solo hay versión html.</p>
+<h3 id="versión-html-única">Versión html (única)</h3>
+<p>Puedes poner un <code>index.html</code> y acceder a él (ruta completa, incluye <code>index.html</code>):</p>
+<pre><code class="language-html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;en&quot;</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;viewport&quot;</span>
+        <span class="hljs-attr">content</span>=<span class="hljs-string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Refrescador | Test<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;socket.io-client.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;client.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+    Aquí empiezas
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</code></pre>
+<p>Tienes que importar 2, o 1 si ya incluyes a <code>socket.io-client.js</code> en tu desarrollo:</p>
+<pre><code class="language-html"><span class="hljs-comment">&lt;!-- Socket.io-client --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;http://127.0.0.1:3003/socket.io-client.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-comment">&lt;!-- El refrescador/cliente, que usa socket.io para conectarse al refrescador/servidor --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;http://127.0.0.1:3003/client.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+</code></pre>
+<p>La plantilla dice así, ahí puedes ver el evento <code>refresh-window</code> que se activa para otras apis fuera de html:</p>
+<pre><code class="language-ejs">io(&quot;http://localhost:&lt;%-config.port%&gt;&quot;).on(&quot;refresh-window&quot;, async function() {
+    console.log(&quot;[refrescador] La app ha sido llamada a refrescarse por el servidor&quot;);
+    &lt;%- !config.payloadFile ? &quot;&quot; : require(&quot;fs&quot;).readFileSync(config.payloadFile).toString()%&gt;
+    &lt;%-config.payload%&gt;
+    location.reload();
+});
 </code></pre>
 <h2 id="opciones-y-valores-por-defecto">Opciones y valores por defecto</h2>
 <table>
@@ -159,8 +201,8 @@
 <td><code>watch</code></td>
 <td><code>-w</code></td>
 <td>Array</td>
-<td><code>[]</code></td>
-<td>Ficheros a escuchar (glob)</td>
+<td><code>[process.cwd()]</code></td>
+<td>Ficheros a escuchar (glob), por defecto el actual</td>
 </tr>
 <tr>
 <td><code>port</code></td>
@@ -173,8 +215,15 @@
 <td><code>ignore</code></td>
 <td><code>-i</code></td>
 <td>Array</td>
-<td><code>[&quot;**node_modules**&quot;]</code></td>
-<td>Ficheros a ignorar (glob)</td>
+<td><code>[&quot;**/node_modules/**&quot;, &quot;**/dist/**&quot;, &quot;**/*.dist.*&quot;, &quot;**/dist.*&quot;]</code></td>
+<td>Ficheros a ignorar (glob). Usa 'dist' en la ruta para que deje de escucharlos automático.</td>
+</tr>
+<tr>
+<td><code>ignore-callback</code></td>
+<td><code>-ic</code></td>
+<td>String</td>
+<td><code>&quot;&quot;</code></td>
+<td>Ficheros que exporta función con <code>module.exports</code> y discrimina si se ignora (<code>true</code>) un fichero o no (<code>false</code>).</td>
 </tr>
 <tr>
 <td><code>debounce</code></td>
@@ -191,11 +240,25 @@
 <td>Mesaje de interludio si quieres</td>
 </tr>
 <tr>
+<td><code>payload</code></td>
+<td><code>-pl</code></td>
+<td>String</td>
+<td><code>&quot;&quot;</code></td>
+<td>Inyección js al refrescar</td>
+</tr>
+<tr>
+<td><code>payload-file</code></td>
+<td><code>-pf</code></td>
+<td>String</td>
+<td><code>&quot;&quot;</code></td>
+<td>Inyección js al refrescar pero vía fichero. Si es <code>*.ejs</code> se usará como plantilla (superior), no como inyeción js simple.</td>
+</tr>
+<tr>
 <td><code>execute</code></td>
 <td><code>-x</code></td>
 <td>Array</td>
 <td><code>[]</code></td>
-<td>Comandos de consola intermedios</td>
+<td>Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo <code>@{refrescador.file}</code> para usarlo como parámetro de tus scripts.</td>
 </tr>
 <tr>
 <td><code>version</code></td>
@@ -213,17 +276,20 @@
 </tr>
 </tbody>
 </table>
+<p>Todas las opciones son coexistentes, excepto cuando se activan <code>--help|-h</code> o <code>--version|-v</code>.</p>
 <h2 id="línea-de-comandos">Línea de comandos</h2>
 <p>Este es un ejemplo con todas las opciones, las obligatorias las irá pidiendo con errores:</p>
 <pre><code class="language-sh">refrescador
   --watch . .. source.sh -w /home/whatever <span class="hljs-comment"># se acumulan</span>
   --ignore <span class="hljs-string">&quot;**/*.{compiled,dist}.*&quot;</span> -i <span class="hljs-string">&quot;dist.{css,js}&quot;</span> <span class="hljs-comment"># se acumulan</span>
+  --ignore-callback <span class="hljs-string">&quot;&quot;</span> -ic <span class="hljs-string">&quot;ignorer.js&quot;</span> <span class="hljs-comment"># solo 1 string a fichero</span>
   --port 3001 -p 3002 <span class="hljs-comment"># 3002</span>
   --message <span class="hljs-string">&quot;Hola, que tal&quot;</span> -m <span class="hljs-string">&quot;Hola, como estas&quot;</span> <span class="hljs-comment"># Hola como estas</span>
   --debounce 200 -d 201 <span class="hljs-comment"># 201</span>
   --version -v <span class="hljs-literal">false</span> <span class="hljs-comment">#false</span>
-  --<span class="hljs-built_in">help</span> -h <span class="hljs-comment"># trye</span>
-  --execute <span class="hljs-string">&quot;echo hola1&quot;</span> -x <span class="hljs-string">&quot;echo hola2&quot;</span> <span class="hljs-comment"># se acumula</span>
+  --<span class="hljs-built_in">help</span> -h <span class="hljs-comment"># true</span>
+  --extensions <span class="hljs-string">&quot;.js&quot;</span> -e <span class="hljs-string">&quot;.css&quot;</span> <span class="hljs-string">&quot;.html&quot;</span> <span class="hljs-comment"># se acumula</span>
+  --execute <span class="hljs-string">&quot;echo hola1&quot;</span> -x <span class="hljs-string">&quot;node programa.js @{refrescador.file}&quot;</span> <span class="hljs-comment"># se acumula + se puede inyectar el fichero que ha cambiado</span>
   --payload-file <span class="hljs-string">&quot;payload1.js&quot;</span> -pf <span class="hljs-string">&quot;payload2.js&quot;</span> <span class="hljs-comment"># payload2.js</span>
   --payload <span class="hljs-string">&quot;console.log(&#x27;Inline payload too!&#x27;)&quot;</span> -pl <span class="hljs-string">&quot;console.log(&#x27;Yes!!&#x27;)&quot;</span> <span class="hljs-comment"># Yes!!</span>
 </code></pre>
@@ -232,7 +298,8 @@
 <pre><code class="language-sh">require(<span class="hljs-string">&quot;refrescador&quot;</span>)({
   watch: [__dirname],
   ignore: [<span class="hljs-string">&quot;**node_modules**&quot;</span>],
-  execute: [<span class="hljs-string">&quot;echo &#x27;hello from the trigger&#x27;&quot;</span>],
+  ignoreCallback: __dirname + <span class="hljs-string">&quot;/ignorer.js&quot;</span>,
+  execute: [<span class="hljs-string">&quot;echo &#x27;hello from the trigger&#x27;&quot;</span>, <span class="hljs-string">&quot;node program.js @{refrescador.file}&quot;</span>],
   message: <span class="hljs-string">&quot;El tiempo de refrescar ha llegado&quot;</span>,
   port: 5005,
 })
@@ -250,10 +317,18 @@
 <li>patrones glob para ignorar</li>
 <li>puerto del servidor</li>
 <li>fichero de payload</li>
-<li>fichero de payload</li>
 <li>código de payload</li>
+<li>inyecta el fichero de cambios en la ejecución:
+<ul>
+<li>con <code>--execute 'node program.js @{refrescador.file}'</code></li>
+<li>para poder hacer hot-reloading o compilación selectiva</li>
+<li>no compilar todo el proyecto, sino las partes que te interesen</li>
 </ul>
 </li>
+<li>función para ignorar ficheros selectivamente al principio del evento</li>
+</ul>
+</li>
+<li>servidor con <code>express</code> para manejar <em>mimetypes</em></li>
 </ul>
 
             

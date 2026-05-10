@@ -71,6 +71,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `watch` | `-w` | Array | `[process.cwd()]` | Ficheros a escuchar (glob), por defecto el actual |
 | `port` | `-p` | Number | 3003 | Puerto del servidor socket.io |
 | `ignore` | `-i` | Array | `["**/node_modules/**", "**/dist/**", "**/*.dist.*", "**/dist.*"]` | Ficheros a ignorar (glob). Usa 'dist' en la ruta para que deje de escucharlos automático. |
+| `ignore-callback` | `-ic` | String | `""` | Ficheros que exporta función con `module.exports` y discrimina si se ignora (`true`) un fichero o no (`false`). |
 | `debounce` | `-d` | Number | `50` | Milisegundos de espera entre evento y re-trigger (porque se acumulan) |
 | `message` | `-m` | String | `"Hora de refrescar!"` | Mesaje de interludio si quieres |
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
@@ -89,6 +90,7 @@ Este es un ejemplo con todas las opciones, las obligatorias las irá pidiendo co
 refrescador
   --watch . .. source.sh -w /home/whatever # se acumulan
   --ignore "**/*.{compiled,dist}.*" -i "dist.{css,js}" # se acumulan
+  --ignore-callback "" -ic "ignorer.js" # solo 1 string a fichero
   --port 3001 -p 3002 # 3002
   --message "Hola, que tal" -m "Hola, como estas" # Hola como estas
   --debounce 200 -d 201 # 201
@@ -108,6 +110,7 @@ En la API, todas son opcionales:
 require("refrescador")({
   watch: [__dirname],
   ignore: ["**node_modules**"],
+  ignoreCallback: __dirname + "/ignorer.js",
   execute: ["echo 'hello from the trigger'", "node program.js @{refrescador.file}"],
   message: "El tiempo de refrescar ha llegado",
   port: 5005,
