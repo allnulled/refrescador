@@ -79,7 +79,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
 | `execute-callback` | `-xc` | Array | `[]` | Ficheros js a importar con `require` que exportan una función que espera ser llamada en cada evento. Usa el prefijo `!` para refrescar la `require.cache` automáticamente en cada evento. |
 | `serve` | `-s` | String | `process.cwd()` | Directorio que el servidor estático expone. |
-| `serve-path` | `-sp` | String | `""` | Ruta que sirve la aplicación estática del servidor. |
+| `url-prefix` | `-up` | String | `""` | Ruta que sirve la aplicación estática del servidor. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
 
@@ -104,8 +104,8 @@ refrescador
   --execute-callback "some-file.js" -xc "some-other-file.js" # se acumula + se puede inyectar el fichero que ha cambiado
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
-  --serve "src/public/www" # solo 1 string
-  --serve-path "dir/app" # solo 1 string
+  --serve "src/public/www" -s "src/private/www" # solo 1 string, private aquí
+  --url-prefix "dir/app" -up "some-app" # solo 1 string, some-app aquí
 ```
 
 ## API
