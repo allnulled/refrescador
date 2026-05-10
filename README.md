@@ -77,6 +77,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
 | `payload-file` | `-pf` | String | `""` | Inyección js al refrescar pero vía fichero. Si es `*.ejs` se usará como plantilla (superior), no como inyeción js simple. |
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
+| `serve` | `-s` | String | `process.cwd()` | Directorio que el servidor estático expone. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
 
