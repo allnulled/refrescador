@@ -101,7 +101,7 @@ refrescador
   --help -h # true
   --extensions ".js" -e ".css" ".html" # se acumula
   --execute "echo hola1" -x "node programa.js @{refrescador.file}" # se acumula + se puede inyectar el fichero que ha cambiado
-  --execute-callback "some-file.js" -xc "some-other-file.js" # se acumula + se puede inyectar el fichero que ha cambiado
+  --execute-callback "some-file.js" -xc "some-other-file.js @{refrescador.file}" # se acumula + se puede inyectar el fichero que ha cambiado
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
   --serve "src/public/www" -s "src/private/www" # solo 1 string, private aquí
