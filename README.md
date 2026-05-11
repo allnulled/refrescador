@@ -22,11 +22,10 @@ Solo hay versión html.
 
 ### Versión html (única)
 
-Por defecto, `refrescador` genera un `index.html` virtual y cacheado renderizando con `ejs` al `index.ejs.html` de la raíz, y lo sirve como entrada de la aplicación estática.
-
-Sin embargo, tú puedes poner un `index.html` (o extender el `.ejs.html` original) y acceder a él:
+Si pones un `index.ejs.html` en la raíz del `--serve` puedes personalizar el `index.html` de landing accediendo a las variables de configuración del refrescador, este es un ejemplo:
 
 ```html
+<!-- Fichero ${config.serve}/index.ejs.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -162,3 +161,6 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
          - compatible con Github Pages (si ignoras la parte de `socket.io`)
    - si en un error en cualquiera de los comandos hay que interrumpìr el evento de cambios detectados o no: `bulletproof`
    - las extensiones de fichero que se están observando: `extensions`
+   - puedes personalizar el `index.html` si pones un `index.ejs.html` en el root del `--serve`
+      - puedes inyectar las configuraciones del refrescador accediendo a la inyectada `config` en la plantilla ejs
+      - donde tienes `config.urlPrefix`
