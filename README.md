@@ -151,6 +151,7 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - ruta a exponer en servidor estático: `serve`
       - con servidor con `express` para manejar *mimetypes*
    - mensaje adjunto opcional: `message`
+   - mensaje adjunto opcional pero basado en fichero: `messageFile`
    - ruta del servidor que expone la aplicación estática: `urlPrefix`
       - las rutas en el `index.html` servido cambiarán con esto
          - por eso en el proyecto hay solamente un `index.ejs.html`
