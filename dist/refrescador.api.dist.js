@@ -47,6 +47,15 @@ var require_trace = __commonJS({
   }
 });
 
+// lib/from-kebab-case-to-camel-case.js
+var require_from_kebab_case_to_camel_case = __commonJS({
+  "lib/from-kebab-case-to-camel-case.js"(exports2, module2) {
+    module2.exports = function(text) {
+      return text.replace(/\-./g, (match) => match.substr(1).toUpperCase());
+    };
+  }
+});
+
 // lib/from-cli-args-to-map.js
 var require_from_cli_args_to_map = __commonJS({
   "lib/from-cli-args-to-map.js"(exports2, module2) {
@@ -67,9 +76,9 @@ var require_from_cli_args_to_map = __commonJS({
         return val !== false && val !== "false";
       }
     };
-    var trace = require(__dirname + "/trace.js");
-    var assertion = require(__dirname + "/from-condition-to-error.js");
-    var fromKebabCaseToCamelCase = require(__dirname + "/from-kebab-case-to-camel-case.js");
+    var trace = require_trace();
+    var assertion = require_from_condition_to_error();
+    var fromKebabCaseToCamelCase = require_from_kebab_case_to_camel_case();
     module2.exports = function(configurations = {}, args = process.argv.slice(2)) {
       const output = {};
       let current = "_";
@@ -349,10 +358,10 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
       const socketioDir = path.dirname(pkgPath);
       const socketIoClientPath = path.join(socketioDir, "client-dist/socket.io.js");
       const socketIoClientCode = fs.readFileSync(socketIoClientPath);
-      const refrescadorClientPath = path.resolve(__dirname, "template-for-socket.io-client-reloader.ejs");
+      const refrescadorClientPath = path.resolve(__dirname + "/template-for-socket.io-client-reloader.ejs");
       const refrescadorClientTemplate = fs.readFileSync(refrescadorClientPath).toString();
       const refrescadorClientCode = ejs.render(refrescadorClientTemplate, { require, config }, {});
-      const indexHtmlPath = path.resolve(__dirname, "../index.ejs.html");
+      const indexHtmlPath = path.resolve(__dirname + "/index.ejs.html");
       const indexHtmlTemplate = fs.readFileSync(indexHtmlPath).toString();
       const indexHtmlCode = ejs.render(indexHtmlTemplate, { require, config }, {});
       if (refrescadorClientPath.endsWith(".ejs")) {
