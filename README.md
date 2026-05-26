@@ -4,7 +4,22 @@ Refrescar y/o ejecutar automático al cambiar ficheros o directorios para aceler
 
 ## Instalar
 
-Para instalar mejor linkar y luego puedes iniciar instancias desde línea de comandos directamente:
+### Para uso solamente
+
+Si no vas a escribir sobre refrescador, puedes directamente usar estos scripts:
+
+- `dist/refrescador.cli.dist.js`: si vas a usar la CLI del sistema directamente
+- `dist/refrescador.api.dist.js`: si quieres usar la API de node.js
+
+Si vas a usar estos, tienes que tener estas librerías en el `node_modules` y usan siempre formato `require/module.exports` nunca `import/export`:
+
+```sh
+npm i -D chokidar ejs express picomatch socket.io
+```
+
+### Para desarrollo
+
+Si sí vas a escribir sobre refrescador, mejor linkar (`npm link`) y luego puedes iniciar instancias desde línea de comandos directamente:
 
 ```sh
 mkdir refrescador
@@ -16,9 +31,9 @@ npm link
 
 ## Conectar el cliente
 
-**Nota:** este programa sirve igual `chokidar` y `nodemon` para ejecución automática, pero además puede conectarse por `socket.io` para refrescar al cliente como `live-reload`.
+**Nota:** este programa sirve igual que `chokidar` y `nodemon` para ejecución automática, pero además puede conectarse por `socket.io` para refrescar al cliente como `live-reload`.
 
-Solo hay versión html.
+Solo hay versión html. Socket.io tiene empalmes con otros lenguajes, pero usamos el de `js`.
 
 ### Versión html (única)
 
@@ -113,7 +128,7 @@ refrescador
 
 En la API, todas son opcionales:
 
-```sh
+```js
 require("refrescador")({
   watch: [__dirname],
   ignore: ["**node_modules**"],
@@ -165,3 +180,4 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - puedes personalizar el `index.html` si pones un `index.ejs.html` en el root del `--serve`
       - puedes inyectar las configuraciones del refrescador accediendo a la inyectada `config` en la plantilla ejs
       - donde tienes `config.urlPrefix`
+   - puedes llevarte los scripts de distribución (instalando con npm las dependencias necesarias)

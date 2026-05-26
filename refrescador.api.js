@@ -1,1 +1,1 @@
-module.exports = require(__dirname + "/lib/from-object-to-window-reloader-server");
+module.exports = require("./lib/from-object-to-window-reloader-server");

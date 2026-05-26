@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "main": "refrescador.api.js",
   "bin": {
-    "refrescador": "refrescador.binario.js"
+    "refrescador": "dist/refrescador.cli.dist.js"
   },
   "scripts": {
+    "build": "npm run build:api && npm run build:cli",
+    "build:api": "esbuild refrescador.api.js --bundle --platform=node --packages=external --outfile=dist/refrescador.api.dist.js",
+    "build:cli": "esbuild refrescador.cli.js --bundle --platform=node --packages=external --outfile=dist/refrescador.cli.dist.js",
     "test:cli": "pkill http-server & http-server -c-1 . -o & ./refrescador.binario.js -w . -p 3003 -pl 'console.log(`El refresco se demora 1 segundo por el await`); await new Promise(ok => setTimeout(() => {ok();},1000));'",
     "test:api": "pkill http-server & http-server -c-1 . -o & node test.js"
   },

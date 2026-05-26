@@ -1,4 +1,4 @@
-require(__dirname + "/refrescador.api.js")({
+require("./refrescador.api.js")({
   payloadFile: __dirname + "/test/payload-example.js",
   urlPrefix: "aplicacion-tal",
   messageFile: "package.json",
