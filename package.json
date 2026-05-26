@@ -1,7 +1,7 @@
 {
   "name": "@allnulled/refrescador",
   "version": "1.0.0",
-  "main": "refrescador.api.js",
+  "main": "dist/refrescador.api.js",
   "bin": {
     "refrescador": "dist/refrescador.cli.dist.js"
   },

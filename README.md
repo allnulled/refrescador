@@ -8,8 +8,8 @@ Refrescar y/o ejecutar automático al cambiar ficheros o directorios para aceler
 
 Si no vas a escribir sobre refrescador, puedes directamente usar estos scripts:
 
-- `dist/refrescador.cli.dist.js`: opcional, si vas a usar la CLI del sistema directamente
-- `dist/refrescador.api.dist.js`: opcional, si quieres usar la API de node.js
+- `dist/refrescador.cli.dist.js`: opcional, si vas a usar la CLI del sistema directamente.
+- `dist/refrescador.api.dist.js`: obligatorio siempre. Permite usar la API de refrescador en node.js
 - `dist/index.ejs.html`: obligatorio siempre. Personaliza la plantilla HTML del `index.html` del servidor estático.
 - `dist/template-for-socket.io-client-reloader.ejs`: obligatorio siempre. Personaliza el código js del cliente de `socket.io` servido por el servidor, importable con `<script src='/client.js'>`.
 

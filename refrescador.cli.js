@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require("./refrescador.api.js").call();
+require(__dirname + "/refrescador.api.dist.js").call();
