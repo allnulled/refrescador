@@ -97,6 +97,9 @@ var require_colors = __commonJS({
             }, "");
             const end = this.endToken;
             return `${begin}${text}${end}`;
+          },
+          print(text) {
+            console.log(this.text(text));
           }
         };
       },
