@@ -1,0 +1,1 @@
+console.log(require(__dirname + "/../dist/refrescador.api.dist.js"));

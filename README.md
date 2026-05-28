@@ -92,6 +92,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `ignore-callback` | `-ic` | String | `""` | Ficheros que exporta función con `module.exports` y discrimina si se ignora (`true`) un fichero o no (`false`). |
 | `debounce` | `-d` | Number | `50` | Milisegundos de espera entre evento y re-trigger (porque se acumulan) |
 | `message` | `-m` | String | `"Hora de refrescar!"` | Mesaje de interludio si quieres |
+| `message-file` | `-mf` | String | `false` | Fichero con contenido de mesaje de interludio si quieres |
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
 | `payload-file` | `-pf` | String | `""` | Inyección js al refrescar pero vía fichero. Si es `*.ejs` se usará como plantilla (superior), no como inyeción js simple. |
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
@@ -131,15 +132,118 @@ refrescador
 En la API, todas son opcionales:
 
 ```js
-require("refrescador")({
+require("refrescador").run({
   watch: [__dirname],
+  port: 3003,
+  extensions: ["html", "css", "js"],
   ignore: ["**node_modules**"],
   ignoreCallback: __dirname + "/ignorer.js",
+  message: "El tiempo de refrescar ha llegado",
+  messageFile: "TODO.md",
   execute: ["echo 'hello from the trigger'", "node program.js @{refrescador.file}"],
   executeCallback: ["file/from/cwd/target.js"],
-  message: "El tiempo de refrescar ha llegado",
-  port: 5005,
+  payload: 'console.log("📟 Evento de refrescar activado");',
+  payloadFile: 'browser-payload.js',
+  serve: 'some/static/www',
+  urlPrefix: 'static/subpath/on/server',
+  bulletproof: false,
+  debounce: 50,
 })
+```
+
+### Parámetros de la API
+
+En este fragmento se reflejan todas las opciones disponibles, con los tipos que se esperan, sus abreviaciones por consola, y sus valores por defecto:
+
+```js
+  const formalDefinition = {
+    _: false, // deshabilitar los parámetros posicionales
+    debounce: {
+      alias: "d",
+      default: 50,
+      type: Number,
+    },
+    port: {
+      alias: "p",
+      default: 3003,
+      type: Number,
+    },
+    watch: {
+      alias: "w",
+      default: [process.cwd()],
+      type: Array,
+    },
+    extensions: {
+      alias: "e",
+      default: ["html", "css", "js"],
+      type: Array,
+    },
+    ignore: {
+      alias: "i",
+      default: ["**/node_modules/**", "**/dist/**", "**/*.dist.*", "**/dist.*"],
+      type: Array,
+    },
+    ignoreCallback: {
+      alias: "ic",
+      default: "",
+      type: String,
+    },
+    message: {
+      alias: "m",
+      default: "📢 Hora de refrescar!",
+      type: String
+    },
+    messageFile: {
+      alias: "mf",
+      default: "",
+      type: String
+    },
+    execute: {
+      alias: "x",
+      default: [],
+      type: Array
+    },
+    executeCallback: {
+      alias: "xc",
+      default: [],
+      type: Array
+    },
+    bulletproof: {
+      alias: "bp",
+      default: false,
+      type: Boolean
+    },
+    help: {
+      alias: "h",
+      default: false,
+      type: Boolean,
+    },
+    payloadFile: {
+      alias: "pf",
+      default: "",
+      type: String,
+    },
+    payload: {
+      alias: "pl",
+      default: 'console.log("📟 Iniciada conexión con refrescador");',
+      type: String,
+    },
+    serve: {
+      alias: "s",
+      default: process.cwd(),
+      type: String,
+    },
+    urlPrefix: {
+      alias: "up",
+      default: "",
+      type: String,
+    },
+    version: {
+      alias: "v",
+      default: false,
+      type: Boolean,
+    },
+  };
 ```
 
 En principio, comprobará que los tipos sean conformes a la especificación automáticamente, e irá pidiendo las correcciones.
@@ -182,4 +286,7 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - puedes personalizar el `index.html` si pones un `index.ejs.html` en el root del `--serve`
       - puedes inyectar las configuraciones del refrescador accediendo a la inyectada `config` en la plantilla ejs
       - donde tienes `config.urlPrefix`
-   - puedes llevarte los scripts de distribución (instalando con npm las dependencias necesarias)
+- puedes llevarte los scripts de distribución (instalando con npm las dependencias necesarias)
+   - los de `dist/refrescador.{cli,api}.dist.js`
+- puedes reutilizar la utilidad de `colors` interna
+   - se accede con `require("refrescador").colors`

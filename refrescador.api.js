@@ -1,1 +1,4 @@
-module.exports = require("./lib/from-object-to-window-reloader-server");
+module.exports = {
+  colors: require("./lib/colors.js"),
+  run: require("./lib/from-object-to-window-reloader-server")
+};
