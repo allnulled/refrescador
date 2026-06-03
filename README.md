@@ -99,6 +99,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `execute-callback` | `-xc` | Array | `[]` | Ficheros js a importar con `require`, que exportan una función, que espera ser llamada en cada evento del observador de ficheros. Permite usar el prefijo `!` para forzar refrescar la `require.cache` automáticamente en cada evento. |
 | `serve` | `-s` | String | `process.cwd()` | Directorio que el servidor estático expone. |
 | `url-prefix` | `-up` | String | `""` | Ruta que sirve la aplicación estática del servidor. |
+| `basedir` | `-b` | String | `process.cwd()` | Solo sirve para acortar las rutas de ficheros mostrados por consola, no es un parámetro estructural. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
 

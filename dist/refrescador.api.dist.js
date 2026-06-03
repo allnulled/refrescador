@@ -527,9 +527,10 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
                 Iterating_execution_callbacks:
                   for (let index = 0; index < config.executeCallback.length; index++) {
                     const init = /* @__PURE__ */ new Date();
-                    const callbackFileBrute = require("path").resolve(process.cwd(), config.executeCallback[index]);
-                    const isFresh = /^\!/g.test(callbackFileBrute);
-                    const callbackFile = callbackFileBrute.replace(/^\!/g, "");
+                    const fileInput = config.executeCallback[index];
+                    const callbackFileBrute = require("path").resolve(process.cwd(), fileInput.replace(/^\!/g, ""));
+                    const isFresh = /^\!/g.test(fileInput);
+                    const callbackFile = callbackFileBrute;
                     if (isFresh) {
                       delete require.cache[callbackFile];
                     }
@@ -540,11 +541,11 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
                         const callback = require(callbackFile);
                         if (typeof callback !== "function") {
                           if (!isFresh) {
-                            colorInform(`  \u26A0\uFE0F  Callback file not exporting a callback: ${shortenPath(callbackFileBrute)}`);
+                            colorInform(`  \u26A0\uFE0F  Callback file not exporting a callback: ${shortenPath(callbackFile)}`);
                           }
                           break Running_callback_file;
                         }
-                        result = await callback(path2);
+                        result = await callback(callbackFileBrute);
                         diff = /* @__PURE__ */ new Date() - init;
                         colorSuccess(`\u{1F7E9} \u{1F38A} Done [\u23F3=${diff / 1e3}s] [\u{1F4BB}=${shortenPath(callbackFile)}] [${index + 1}/${config.execute.length}]`);
                       } catch (error) {
