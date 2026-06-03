@@ -428,20 +428,28 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         color1(`   - port:            ${colors.endToken}${listSeparator}${config.port}`);
         color1(`   - watch:           ${colors.endToken}${listSeparator}${!config.watch.length ? "(none)" : config.watch.map((f) => path.resolve(f)).join(listSeparator)}`);
         color1(`   - debounce:        ${colors.endToken}${listSeparator}${config.debounce}`);
-        color1(`   - message:         ${colors.endToken}${listSeparator}${config.message}`);
-        color1(`   - messageFile:     ${colors.endToken}${listSeparator}${config.messageFile}`);
         color1(`   - extensions:      ${colors.endToken}${listSeparator}${!config.extensions.length ? "(none)" : config.extensions.join(listSeparator)}`);
         color1(`   - ignore:          ${colors.endToken}${listSeparator}${!config.ignore.length ? "(none)" : config.ignore.map((f) => path.resolve(f)).join(listSeparator)}`);
         color1(`   - ignoreCallback:  ${colors.endToken}${listSeparator}${!config.ignoreCallback.length ? "(none)" : config.ignoreCallback}`);
-        color1(`   - payload:         ${colors.endToken}${listSeparator}${config.payload.length} characters`);
-        color1(`   - payloadFile:     ${colors.endToken}${listSeparator}${config.payloadFile ? config.payloadFile : "(none)"}`);
         color1(`   - serve:           ${colors.endToken}${listSeparator}${staticDir}`);
         color1(`   - urlPrefix:       ${colors.endToken}${listSeparator}${!config.urlPrefix ? "(none)" : config.urlPrefix}`);
+        color1(`   - payload:         ${colors.endToken}${listSeparator}${config.payload.length} characters`);
+        color1(`   - payloadFile:     ${colors.endToken}${listSeparator}${config.payloadFile ? config.payloadFile : "(none)"}`);
+        color1(`   - bulletproof:     ${colors.endToken}${listSeparator}${config.bulletproof ? "yes" : "no"}`);
+        color1(`   - message:         ${colors.endToken}${listSeparator}${config.message}`);
+        color1(`   - messageFile:     ${colors.endToken}${listSeparator}${config.messageFile}`);
+        color1(`   - basedir:         ${colors.endToken}${listSeparator}${config.basedir}`);
         color1(`   - execute:         ${colors.endToken}${listSeparator}${!config.execute.length ? "(none)" : config.execute.join(listSeparator)}`);
         color1(`   - executeCallback: ${colors.endToken}${listSeparator}${!config.executeCallback.length ? "(none)" : config.executeCallback.join(listSeparator)}`);
-        color1(`   - bulletproof:     ${colors.endToken}${listSeparator}${config.bulletproof ? "yes" : "no"}`);
       };
       config.urlPrefix = config.urlPrefix ? "/" + config.urlPrefix.replace(/^\//g, "") : config.urlPrefix;
+      const shortenPath = (subpath) => {
+        let s1 = require("path").resolve(config.basedir, subpath);
+        if (s1.length > 1 && s1.startsWith(config.basedir)) {
+          s1 = "." + s1.replace(config.basedir, "");
+        }
+        return s1;
+      };
       const pkgPath = require.resolve("socket.io/package.json");
       const socketioDir = path.dirname(pkgPath);
       const socketIoClientPath = path.join(socketioDir, "client-dist/socket.io.js");
@@ -514,8 +522,7 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
             try {
               console.clear();
               printUrls();
-              colorWarn("\u267B\uFE0F  Changes detected by refrescador on file:");
-              colorWarn(`  \u{1F4C4} ${path2}`);
+              colorWarn(`\u267B\uFE0F  Changes detected on: \u{1F4C4}=${shortenPath(path2)}`);
               if (config.executeCallback.length) {
                 Iterating_execution_callbacks:
                   for (let index = 0; index < config.executeCallback.length; index++) {
@@ -526,17 +533,24 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
                     if (isFresh) {
                       delete require.cache[callbackFile];
                     }
-                    colorWarn(`\u{1F7E8} \u26A1\uFE0F Started callback [\u{1F4DE}=${callbackFile}] [${index + 1}/${config.executeCallback.length}]`);
-                    const callback = require(callbackFile);
+                    colorWarn(`\u{1F7E8} \u26A1\uFE0F Started callback [\u{1F4DE}=${shortenPath(callbackFile)}] [${index + 1}/${config.executeCallback.length}]`);
                     let result = void 0;
-                    try {
-                      result = await callback(path2);
-                      diff = /* @__PURE__ */ new Date() - init;
-                      colorSuccess(`\u{1F7E9} \u{1F38A} Done [\u23F3=${diff / 1e3}s] [\u{1F4BB}=${callbackFile}] [${index + 1}/${config.execute.length}]`);
-                    } catch (error) {
-                      colorError(`\u{1F7E5} \u2757\uFE0F Error executing callback \xAB${callbackFile}\xBB:`, error);
-                      throw error;
-                    }
+                    Running_callback_file:
+                      try {
+                        const callback = require(callbackFile);
+                        if (typeof callback !== "function") {
+                          if (!isFresh) {
+                            colorInform(`  \u26A0\uFE0F  Callback file not exporting a callback: ${shortenPath(callbackFileBrute)}`);
+                          }
+                          break Running_callback_file;
+                        }
+                        result = await callback(path2);
+                        diff = /* @__PURE__ */ new Date() - init;
+                        colorSuccess(`\u{1F7E9} \u{1F38A} Done [\u23F3=${diff / 1e3}s] [\u{1F4BB}=${shortenPath(callbackFile)}] [${index + 1}/${config.execute.length}]`);
+                      } catch (error) {
+                        colorError(`\u{1F7E5} \u2757\uFE0F Error executing callback \xAB${shortenPath(callbackFile)}\xBB:`, error);
+                        throw error;
+                      }
                     if (result instanceof AbortController) {
                       colorError(`\u{1F7E5} \u2757\uFE0F Aborting filewatcher event by execution callback \u26A0\uFE0F`);
                       return result;
@@ -666,7 +680,7 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
       });
       console.clear();
       const printUrls = function() {
-        color2(`\u{1F7E2} Puntos disponibles:`);
+        color2(`\u{1F7E2} Puntos disponibles: \u{1F4C2}=${config.basedir}`);
         color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix}/index.html           \u2502 (la entrada inicial de tu aplicaci\xF3n)`);
         color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix ? " ".repeat(config.urlPrefix.length) : ""}                      \u2502 (socket.io-server de refrescador)`);
         color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix}/socket.io-client.js  \u2502 (socket.io-client)`);
@@ -785,6 +799,11 @@ var require_from_object_to_window_reloader_server = __commonJS({
           default: "",
           type: String
         },
+        basedir: {
+          alias: "b",
+          default: process.cwd(),
+          type: String
+        },
         version: {
           alias: "v",
           default: false,
@@ -834,6 +853,7 @@ var require_from_object_to_window_reloader_server = __commonJS({
         payloadFile: { type: String },
         execute: { type: Array },
         executeCallback: { type: Array },
+        basedir: { type: String },
         version: { type: Boolean }
       });
       return {

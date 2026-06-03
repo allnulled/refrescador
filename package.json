@@ -6,7 +6,7 @@
     "refrescador": "dist/refrescador.cli.dist.js"
   },
   "scripts": {
-    "build": "npm run build:api && npm run build:cli",
+    "build": "npm run build:api && npm run build:cli && node export.js",
     "build:api": "esbuild refrescador.api.js --bundle --platform=node --packages=external --outfile=dist/refrescador.api.dist.js",
     "build:cli": "esbuild refrescador.cli.js --bundle --platform=node --packages=external --outfile=dist/refrescador.cli.dist.js",
     "test": "node test/example-of-usage.test.js",
