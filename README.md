@@ -96,7 +96,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `payload` | `-pl` | String | `""` | Inyección js al refrescar |
 | `payload-file` | `-pf` | String | `""` | Inyección js al refrescar pero vía fichero. Si es `*.ejs` se usará como plantilla (superior), no como inyeción js simple. |
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
-| `execute-callback` | `-xc` | Array | `[]` | Ficheros js a importar con `require` que exportan una función que espera ser llamada en cada evento. Usa el prefijo `!` para refrescar la `require.cache` automáticamente en cada evento. |
+| `execute-callback` | `-xc` | Array | `[]` | Ficheros js a importar con `require`, que exportan una función, que espera ser llamada en cada evento del observador de ficheros. Permite usar el prefijo `!` para forzar refrescar la `require.cache` automáticamente en cada evento. |
 | `serve` | `-s` | String | `process.cwd()` | Directorio que el servidor estático expone. |
 | `url-prefix` | `-up` | String | `""` | Ruta que sirve la aplicación estática del servidor. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
@@ -120,7 +120,7 @@ refrescador
   --help -h # true
   --extensions ".js" -e ".css" ".html" # se acumula
   --execute "echo hola1" -x "node programa.js @{refrescador.file}" # se acumula + se puede inyectar el fichero que ha cambiado
-  --execute-callback "some-file.js" -xc "some-other-file.js @{refrescador.file}" # se acumula + se puede inyectar el fichero que ha cambiado
+  --execute-callback "some-file.js" -xc "some-other-file.js @{refrescador.file}" -xc "!path/to/auto-uncached.js" # se acumula + se puede inyectar el fichero que ha cambiado + se puede forzar el delete require.cache con el ! delante
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
   --serve "src/public/www" -s "src/private/www" # solo 1 string, private aquí
@@ -141,7 +141,7 @@ require("refrescador").run({
   message: "El tiempo de refrescar ha llegado",
   messageFile: "TODO.md",
   execute: ["echo 'hello from the trigger'", "node program.js @{refrescador.file}"],
-  executeCallback: ["file/from/cwd/target.js"],
+  executeCallback: ["file/from/cwd/target.js", ],
   payload: 'console.log("📟 Evento de refrescar activado");',
   payloadFile: 'browser-payload.js',
   serve: 'some/static/www',
@@ -269,6 +269,7 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - función para executar un callback en lugar de un comando de consola: `executeCallback`
       - es más rápido que una llamada a consola
       - permite interrumpir el evento si devuelves un `AbortController`
+      - permite hacer `delete require.cache[options.executeCallback]` si pones un `!` delante de la ruta
    - ruta a exponer en servidor estático: `serve`
       - con servidor con `express` para manejar *mimetypes*
    - mensaje adjunto opcional: `message`
