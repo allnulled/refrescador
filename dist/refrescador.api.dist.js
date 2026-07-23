@@ -423,6 +423,7 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
       const config = Object.assign({}, defaultConfig, userConfig);
       const listSeparator = "\n       - ";
       const staticDir = path.resolve(config.serve || process.cwd());
+      const staticPath = config.staticPath || "";
       const printConfigurations = function() {
         color1(`\u{1F527} Configuraciones del refrescador:`);
         color1(`   - port:            ${colors.endToken}${listSeparator}${config.port}`);
@@ -432,6 +433,7 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         color1(`   - ignore:          ${colors.endToken}${listSeparator}${!config.ignore.length ? "(none)" : config.ignore.map((f) => path.resolve(f)).join(listSeparator)}`);
         color1(`   - ignoreCallback:  ${colors.endToken}${listSeparator}${!config.ignoreCallback.length ? "(none)" : config.ignoreCallback}`);
         color1(`   - serve:           ${colors.endToken}${listSeparator}${staticDir}`);
+        color1(`   - staticPath:      ${colors.endToken}${listSeparator}${!config.staticPath.length ? "(none)" : config.staticPath}`);
         color1(`   - urlPrefix:       ${colors.endToken}${listSeparator}${!config.urlPrefix ? "(none)" : config.urlPrefix}`);
         color1(`   - payload:         ${colors.endToken}${listSeparator}${config.payload.length} characters`);
         color1(`   - payloadFile:     ${colors.endToken}${listSeparator}${config.payloadFile ? config.payloadFile : "(none)"}`);
@@ -481,7 +483,14 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
           next();
         }
       });
-      router.use(express.static(staticDir));
+      const prefixSlash = function(text) {
+        return text.startsWith("/") ? text : `/${text}`;
+      };
+      if (config.staticPath.length) {
+        router.use(prefixSlash(config.staticPath), express.static(staticDir));
+      } else {
+        router.use(express.static(staticDir));
+      }
       router.get("/socket.io-client.js", (req, res) => {
         res.type("application/javascript");
         res.send(socketIoClientCode);
@@ -494,7 +503,7 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         res.type("text/html");
         res.send(indexHtmlCode);
       });
-      if (config.urlPrefix) {
+      if (config.urlPrefix.length) {
         app.use(config.urlPrefix, router);
       } else {
         app.use(router);
@@ -681,11 +690,23 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
       });
       console.clear();
       const printUrls = function() {
+        const normalizeJoin = function(a, b) {
+          const params = [];
+          if (typeof a === "string" && a.length) params.push(a);
+          if (typeof b === "string" && b.length) params.push(b);
+          if (!params.length) return "";
+          let result = path.join(...params);
+          if (!result.startsWith("/")) {
+            result = `/${result}`;
+          }
+          return result;
+        };
         color2(`\u{1F7E2} Puntos disponibles: \u{1F4C2}=${config.basedir}`);
-        color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix}/index.html           \u2502 (la entrada inicial de tu aplicaci\xF3n)`);
-        color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix ? " ".repeat(config.urlPrefix.length) : ""}                      \u2502 (socket.io-server de refrescador)`);
-        color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix}/socket.io-client.js  \u2502 (socket.io-client)`);
-        color2(` \u{1F539} http://localhost:${config.port}${config.urlPrefix}/client.js            \u2502 (cliente de refrescador)`);
+        color2(` \u{1F539} [app]       http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "index.html"));
+        color2(` \u{1F539} [server]    http://localhost:${config.port}` + normalizeJoin(config.urlPrefix));
+        color2(` \u{1F539} [static]    http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, config.staticPath));
+        color2(` \u{1F539} [socket.io] http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "socket.io-client.js"));
+        color2(` \u{1F539} [reloader]  http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "client.js"));
       };
       server.listen(config.port, () => {
         printUrls();
@@ -795,6 +816,11 @@ var require_from_object_to_window_reloader_server = __commonJS({
           default: process.cwd(),
           type: String
         },
+        staticPath: {
+          alias: "sp",
+          default: "",
+          type: String
+        },
         urlPrefix: {
           alias: "up",
           default: "",
@@ -845,6 +871,7 @@ var require_from_object_to_window_reloader_server = __commonJS({
         debounce: { type: Number },
         port: { type: Number },
         serve: { type: String },
+        staticPath: { type: String },
         urlPrefix: { type: String },
         bulletproof: { type: Boolean },
         help: { type: Boolean },

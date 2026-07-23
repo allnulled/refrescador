@@ -98,7 +98,8 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `execute` | `-x` | Array | `[]` | Comandos de consola intermedios. Inyecta el string del fichero que encendió los cambios poniendo `@{refrescador.file}` para usarlo como parámetro de tus scripts. |
 | `execute-callback` | `-xc` | Array | `[]` | Ficheros js a importar con `require`, que exportan una función, que espera ser llamada en cada evento del observador de ficheros. Permite usar el prefijo `!` para forzar refrescar la `require.cache` automáticamente en cada evento. |
 | `serve` | `-s` | String | `process.cwd()` | Directorio que el servidor estático expone. |
-| `url-prefix` | `-up` | String | `""` | Ruta que sirve la aplicación estática del servidor. |
+| `staticPath` | `-sp` | String | `""` | Ruta que sirve la aplicación estática del servidor. Afecta únicamente al servidor estático. |
+| `url-prefix` | `-up` | String | `""` | Ruta que sirve toda la aplicación del servidor. Afecta a todo el enrutador. |
 | `basedir` | `-b` | String | `process.cwd()` | Solo sirve para acortar las rutas de ficheros mostrados por consola, no es un parámetro estructural. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
@@ -125,7 +126,8 @@ refrescador
   --payload-file "payload1.js" -pf "payload2.js" # payload2.js
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
   --serve "src/public/www" -s "src/private/www" # solo 1 string, private aquí
-  --url-prefix "dir/app" -up "some-app" # solo 1 string, some-app aquí
+  --url-prefix "my/application" -up "my/app" # solo 1 string, my/app aquí
+  --static-path "my/static/directory" -sp "my/static/folder" # solo 1 string, folder aquí
 ```
 
 ## API
@@ -146,7 +148,8 @@ require("refrescador").run({
   payload: 'console.log("📟 Evento de refrescar activado");',
   payloadFile: 'browser-payload.js',
   serve: 'some/static/www',
-  urlPrefix: 'static/subpath/on/server',
+  urlPrefix: 'subpath/on/server',
+  staticPath: 'static/content',
   bulletproof: false,
   debounce: 50,
 })
@@ -234,9 +237,19 @@ En este fragmento se reflejan todas las opciones disponibles, con los tipos que 
       default: process.cwd(),
       type: String,
     },
+    staticPath: {
+      alias: "sp",
+      default: "",
+      type: String,
+    },
     urlPrefix: {
       alias: "up",
       default: "",
+      type: String,
+    },
+    basedir: {
+      alias: "b",
+      default: process.cwd(),
       type: String,
     },
     version: {
@@ -275,8 +288,11 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
       - con servidor con `express` para manejar *mimetypes*
    - mensaje adjunto opcional: `message`
    - mensaje adjunto opcional pero basado en fichero: `messageFile`
-   - ruta del servidor que expone la aplicación estática: `urlPrefix`
-      - las rutas en el `index.html` servido cambiarán con esto
+   - ruta del servidor que expone al directorio estático: `staticPath`
+      - permite que el directorio estático se sirva en un path concreto
+      - esto ayuda a que los módulos del browser y de nodejs puedan acceder con rutas (raíz) idénticas
+   - ruta del servidor que expone ~~la aplicación estática~~ todo el enrutador del servidor: `urlPrefix`
+      - las rutas en el `index.html` servido cambiarán con esto (a no ser que uses rutas relativas e internas)
          - por eso en el proyecto hay solamente un `index.ejs.html`
          - y el `index.html` solo existe en la caché del servidor
       - la ruta del servidor `socket.io` en cambio se mantiene en la raíz

@@ -1,9 +1,9 @@
 const fs = require("fs");
 
 try {
-  fs.copyFileSync(__dirname + "/dist/refrescador.api.dist.js", "/home/carlos/Escritorio/Programas/moduler-v5-and-dev-toolkit-starter/src/lib/dev-toolkit/refrescador.api.dist.js");
-  fs.copyFileSync(__dirname + "/dist/refrescador.cli.dist.js", "/home/carlos/Escritorio/Programas/moduler-v5-and-dev-toolkit-starter/src/lib/dev-toolkit/refrescador.cli.dist.js");
-  console.log("Exportado a proyecto «moduler-v5-and-dev-toolkit-starter»");
+  fs.copyFileSync(__dirname + "/dist/refrescador.api.dist.js", "/home/carlos/Escritorio/Programas/moduler-v6/dist/refrescador/refrescador.api.dist.js");
+  fs.copyFileSync(__dirname + "/dist/refrescador.cli.dist.js", "/home/carlos/Escritorio/Programas/moduler-v6/dist/refrescador/refrescador.cli.dist.js");
+  console.log("Exportado a proyecto «moduler-v6»");
 } catch (error) {
   // @OK
 }
