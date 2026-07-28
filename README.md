@@ -318,3 +318,7 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
 - puedes reutilizar la utilidad de `colors` interna
    - se accede con `require("refrescador").colors`
 - puedes especificarle controladores extra para el servidor: `controllers`
+   - puedes especificarle devolviendo un `Array<name:String,slug:String>`
+      - desde los controllers
+      - la info de los endpoints
+      - para que salga al refrescar y poder acceder rápido

@@ -690,6 +690,17 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         console.error("Watcher error:", err);
       });
       console.clear();
+      const extraControllers = [];
+      if (config.controllers.length) {
+        for (let indexController = 0; indexController < config.controllers.length; indexController++) {
+          const controllerPath = config.controllers[indexController];
+          const controllerFile = path.resolve(controllerPath);
+          console.log(`[*] Importing controllers (${indexController}) from: ${controllerFile}`);
+          const controllerCallback = require(controllerFile);
+          const controllerReport = controllerCallback({ app, router, server, config, watcher, io });
+          if (Array.isArray(controllerReport)) extraControllers.push(...controllerReport);
+        }
+      }
       const printUrls = function() {
         const normalizeJoin = function(a, b) {
           const params = [];
@@ -709,16 +720,13 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         color2(` \u{1F539} [socket.io] http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "socket.io-client.js"));
         color2(` \u{1F539} [reloader]  http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "client.js"));
         if (config.controllers.length) color2(` \u{1F539} [controllers]  ${config.controllers.length}` + (config.controllers.length ? "\n" + config.controllers.join("\n + ") : ""));
-      };
-      if (config.controllers.length) {
-        for (let indexController = 0; indexController < config.controllers.length; indexController++) {
-          const controllerPath = config.controllers[indexController];
-          const controllerFile = path.resolve(controllerPath);
-          console.log(`[*] Importing controllers (${indexController}) from: ${controllerFile}`);
-          const controllerCallback = require(controllerFile);
-          controllerCallback({ app, router, server, config, watcher, io });
+        if (extraControllers.length) {
+          for (let indexCtrlReport = 0; indexCtrlReport < extraControllers.length; indexCtrlReport++) {
+            const extraController = extraControllers[indexCtrlReport];
+            color2(` \u{1F539} ${("[" + extraController[0] + "]").padEnd(11)} http://localhost:${config.port}` + normalizeJoin(extraController[1]));
+          }
         }
-      }
+      };
       server.listen(config.port, () => {
         printUrls();
         printConfigurations();
