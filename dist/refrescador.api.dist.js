@@ -714,16 +714,16 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
           return result;
         };
         color2(`\u{1F7E2} Puntos disponibles: \u{1F4C2}=${config.basedir}`);
-        color2(` \u{1F539} [app]       http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "index.html"));
-        color2(` \u{1F539} [server]    http://localhost:${config.port}` + normalizeJoin(config.urlPrefix));
-        color2(` \u{1F539} [static]    http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, config.staticPath));
-        color2(` \u{1F539} [socket.io] http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "socket.io-client.js"));
-        color2(` \u{1F539} [reloader]  http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "client.js"));
-        if (config.controllers.length) color2(` \u{1F539} [controllers]  ${config.controllers.length}` + (config.controllers.length ? "\n" + config.controllers.join("\n + ") : ""));
+        color2(` \u{1F539} [app]         http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "index.html"));
+        color2(` \u{1F539} [server]      http://localhost:${config.port}` + normalizeJoin(config.urlPrefix));
+        color2(` \u{1F539} [static]      http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, config.staticPath));
+        color2(` \u{1F539} [socket.io]   http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "socket.io-client.js"));
+        color2(` \u{1F539} [reloader]    http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "client.js"));
+        if (config.controllers.length) color2(` \u{1F539} [controllers] ${config.controllers.length}` + (config.controllers.length ? "\n" + " ".repeat(18) + config.controllers.map((c) => shortenPath(c)).join("\n + ") : ""));
         if (extraControllers.length) {
           for (let indexCtrlReport = 0; indexCtrlReport < extraControllers.length; indexCtrlReport++) {
             const extraController = extraControllers[indexCtrlReport];
-            color2(` \u{1F539} ${("[" + extraController[0] + "]").padEnd(11)} http://localhost:${config.port}` + normalizeJoin(extraController[1]));
+            color2(` \u{1F539} ${("[" + extraController[0] + "]").padEnd(13)} http://localhost:${config.port}` + normalizeJoin(extraController[1]));
           }
         }
       };
