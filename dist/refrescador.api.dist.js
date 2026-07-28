@@ -432,15 +432,16 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         color1(`   - extensions:      ${colors.endToken}${listSeparator}${!config.extensions.length ? "(none)" : config.extensions.join(listSeparator)}`);
         color1(`   - ignore:          ${colors.endToken}${listSeparator}${!config.ignore.length ? "(none)" : config.ignore.map((f) => path.resolve(f)).join(listSeparator)}`);
         color1(`   - ignoreCallback:  ${colors.endToken}${listSeparator}${!config.ignoreCallback.length ? "(none)" : config.ignoreCallback}`);
+        color1(`   - urlPrefix:       ${colors.endToken}${listSeparator}${!config.urlPrefix ? "(none)" : config.urlPrefix}`);
         color1(`   - serve:           ${colors.endToken}${listSeparator}${staticDir}`);
         color1(`   - staticPath:      ${colors.endToken}${listSeparator}${!config.staticPath.length ? "(none)" : config.staticPath}`);
-        color1(`   - urlPrefix:       ${colors.endToken}${listSeparator}${!config.urlPrefix ? "(none)" : config.urlPrefix}`);
         color1(`   - payload:         ${colors.endToken}${listSeparator}${config.payload.length} characters`);
         color1(`   - payloadFile:     ${colors.endToken}${listSeparator}${config.payloadFile ? config.payloadFile : "(none)"}`);
         color1(`   - bulletproof:     ${colors.endToken}${listSeparator}${config.bulletproof ? "yes" : "no"}`);
         color1(`   - message:         ${colors.endToken}${listSeparator}${config.message}`);
         color1(`   - messageFile:     ${colors.endToken}${listSeparator}${config.messageFile}`);
         color1(`   - basedir:         ${colors.endToken}${listSeparator}${config.basedir}`);
+        color1(`   - controllers:     ${colors.endToken}${listSeparator}${!config.controllers.length ? "(none)" : config.controllers.map((f) => path.resolve(f)).join(listSeparator)}`);
         color1(`   - execute:         ${colors.endToken}${listSeparator}${!config.execute.length ? "(none)" : config.execute.join(listSeparator)}`);
         color1(`   - executeCallback: ${colors.endToken}${listSeparator}${!config.executeCallback.length ? "(none)" : config.executeCallback.join(listSeparator)}`);
       };
@@ -707,7 +708,17 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
         color2(` \u{1F539} [static]    http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, config.staticPath));
         color2(` \u{1F539} [socket.io] http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "socket.io-client.js"));
         color2(` \u{1F539} [reloader]  http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "client.js"));
+        if (config.controllers.length) color2(` \u{1F539} [controllers]  ${config.controllers.length}` + (config.controllers.length ? "\n" + config.controllers.join("\n + ") : ""));
       };
+      if (config.controllers.length) {
+        for (let indexController = 0; indexController < config.controllers.length; indexController++) {
+          const controllerPath = config.controllers[indexController];
+          const controllerFile = path.resolve(controllerPath);
+          console.log(`[*] Importing controllers (${indexController}) from: ${controllerFile}`);
+          const controllerCallback = require(controllerFile);
+          controllerCallback({ app, router, server, config, watcher, io });
+        }
+      }
       server.listen(config.port, () => {
         printUrls();
         printConfigurations();
@@ -723,7 +734,7 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
           second: "numeric"
         })}`);
       });
-      return { server, watcher, config, io };
+      return { app, router, server, config, watcher, io };
     };
   }
 });
@@ -831,6 +842,11 @@ var require_from_object_to_window_reloader_server = __commonJS({
           default: process.cwd(),
           type: String
         },
+        controllers: {
+          alias: "ct",
+          default: [],
+          type: Array
+        },
         version: {
           alias: "v",
           default: false,
@@ -882,6 +898,7 @@ var require_from_object_to_window_reloader_server = __commonJS({
         execute: { type: Array },
         executeCallback: { type: Array },
         basedir: { type: String },
+        controllers: { type: Array },
         version: { type: Boolean }
       });
       return {

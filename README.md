@@ -101,6 +101,7 @@ io("http://localhost:<%-config.port%>").on("refresh-window", async function() {
 | `staticPath` | `-sp` | String | `""` | Ruta que sirve la aplicación estática del servidor. Afecta únicamente al servidor estático. |
 | `url-prefix` | `-up` | String | `""` | Ruta que sirve toda la aplicación del servidor. Afecta a todo el enrutador. |
 | `basedir` | `-b` | String | `process.cwd()` | Solo sirve para acortar las rutas de ficheros mostrados por consola, no es un parámetro estructural. |
+| `controllers` | `-ct` | Array | `[]` | Permite especificar ficheros que devuelven un callback donde puedes añadir controladores al servidor de `express` de `refrescador`. El `arguments[0]` del *callback* exportado recibe todo el contexto. |
 | `version` | `-v` | Boolean | `false` | Saber la versión |
 | `help` | `-h` | Boolean | `false` | Ver la ayuda |
 
@@ -127,6 +128,7 @@ refrescador
   --payload "console.log('Inline payload too!')" -pl "console.log('Yes!!')" # Yes!!
   --serve "src/public/www" -s "src/private/www" # solo 1 string, private aquí
   --url-prefix "my/application" -up "my/app" # solo 1 string, my/app aquí
+  --controllers "controller1.js" -ct "controller2.js" # se acumulan
   --static-path "my/static/directory" -sp "my/static/folder" # solo 1 string, folder aquí
 ```
 
@@ -151,6 +153,8 @@ require("refrescador").run({
   urlPrefix: 'subpath/on/server',
   staticPath: 'static/content',
   bulletproof: false,
+  basedir: __dirname,
+  controllers: [__dirname + "/controller1.js"],
   debounce: 50,
 })
 ```
@@ -252,6 +256,11 @@ En este fragmento se reflejan todas las opciones disponibles, con los tipos que 
       default: process.cwd(),
       type: String,
     },
+    controllers: {
+      alias: "ct",
+      default: [],
+      type: Array,
+    },
     version: {
       alias: "v",
       default: false,
@@ -308,3 +317,4 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
    - los de `dist/refrescador.{cli,api}.dist.js`
 - puedes reutilizar la utilidad de `colors` interna
    - se accede con `require("refrescador").colors`
+- puedes especificarle controladores extra para el servidor: `controllers`
