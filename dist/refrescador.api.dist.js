@@ -713,7 +713,8 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
           }
           return result;
         };
-        color2(`\u{1F7E2} Puntos disponibles: \u{1F4C2}=${config.basedir}`);
+        const dateString = ((d) => `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}:${String(d.getSeconds()).padStart(2, "0")}.${String(d.getMilliseconds()).padStart(3, "0")}`)(/* @__PURE__ */ new Date());
+        color2(`\u{1F514} Puntos disponibles: \u23F3=${dateString} \u{1F4C2}=${config.basedir}`);
         color2(` \u{1F539} [app]         http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, "index.html"));
         color2(` \u{1F539} [server]      http://localhost:${config.port}` + normalizeJoin(config.urlPrefix));
         color2(` \u{1F539} [static]      http://localhost:${config.port}` + normalizeJoin(config.urlPrefix, config.staticPath));
