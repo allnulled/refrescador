@@ -322,3 +322,6 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
       - desde los controllers
       - la info de los endpoints
       - para que salga al refrescar y poder acceder rápido
+- `ignoreCallback` acepta ahora un callback O un JSON array
+   - y puede apuntar a un .json también
+   - y funcionará igual en tiempo real, puedes editar el json en el loop y será tenido en cuenta

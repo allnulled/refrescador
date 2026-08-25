@@ -638,7 +638,15 @@ var require_from_glob_watcher_to_socketio_emit = __commonJS({
           return false;
         }
         try {
-          return require(config.ignoreCallback)(filepath);
+          delete require.cache[config.ignoreCallback];
+          const ignoredEntity = require(config.ignoreCallback);
+          if (Array.isArray(ignoredEntity)) {
+            return require("picomatch")(ignoredEntity)(filepath);
+          } else if (typeof ignoredEntity === "function") {
+            return ignoredEntity(filepath);
+          } else {
+            throw new Error(`Ignored pattern must export array or function on \xAB${config.ignoreCallback}\xBB but \xAB${typeof ignoredEntity}\xBB was found instead`);
+          }
         } catch (error) {
           console.error(`Error loading ignore callback file \xAB${filepath}\xBB:`, error);
         }
