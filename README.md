@@ -116,6 +116,7 @@ refrescador
   --watch . .. source.sh -w /home/whatever # se acumulan
   --ignore "**/*.{compiled,dist}.*" -i "dist.{css,js}" # se acumulan
   --ignore-callback "" -ic "ignorer.js" # solo 1 string a fichero
+  --however-listen "dist.still-listened-1.js" -hl "dist.still-listened-2.js" # se acumulan
   --port 3001 -p 3002 # 3002
   --message "Hola, que tal" -m "Hola, como estas" # Hola como estas
   --debounce 200 -d 201 # 201
@@ -143,6 +144,7 @@ require("refrescador").run({
   extensions: ["html", "css", "js"],
   ignore: ["**node_modules**"],
   ignoreCallback: __dirname + "/ignorer.js",
+  howeverListen: [],
   message: "El tiempo de refrescar ha llegado",
   messageFile: "TODO.md",
   execute: ["echo 'hello from the trigger'", "node program.js @{refrescador.file}"],
@@ -195,6 +197,11 @@ En este fragmento se reflejan todas las opciones disponibles, con los tipos que 
       alias: "ic",
       default: "",
       type: String,
+    },
+    howeverListen: {
+      alias: "hl",
+      default: [],
+      type: Array,
     },
     message: {
       alias: "m",
@@ -325,3 +332,7 @@ En principio, comprobará que los tipos sean conformes a la especificación auto
 - `ignoreCallback` acepta ahora un callback O un JSON array
    - y puede apuntar a un .json también
    - y funcionará igual en tiempo real, puedes editar el json en el loop y será tenido en cuenta
+- `howeverListen` permite escuchar ficheros **pese a** tener reglas de ignore o de extensión aplicándose por cualquier otro lado.
+   - tiene prioridad absoluta sobre todas las otras configs
+   - que básicamente serían `ignore`, `ignoreCallback` y `extensions`
+   - tiene que ser un array, no permite cargas dinámicas de momento

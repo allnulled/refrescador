@@ -6,6 +6,7 @@
     "refrescador": "dist/refrescador.cli.dist.js"
   },
   "scripts": {
+    "dev": "./dist/refrescador.cli.dist.js --watch lib --execute 'npm run build'",
     "build": "npm run build:api && npm run build:cli && node export.js",
     "build:api": "esbuild refrescador.api.js --bundle --platform=node --packages=external --outfile=dist/refrescador.api.dist.js",
     "build:cli": "esbuild refrescador.cli.js --bundle --platform=node --packages=external --outfile=dist/refrescador.cli.dist.js",
@@ -25,6 +26,7 @@
     "ejs": "^5.0.1",
     "express": "^5.2.1",
     "picomatch": "^4.0.4",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "wrap-ansi": "^10.0.1"
   }
 }
